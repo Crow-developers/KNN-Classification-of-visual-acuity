@@ -14,9 +14,11 @@ def run():
   print("=" * 70)
   print("     STAGE 1 : Data load & Exploration")
   print("=" * 70)
+
 # ----------------------- Load -----------------------
   df = pd.read_csv(DATASET_PATH)
   print(f"\nDataset loaded: {df.shape[0]} rows x {df.shape[1]} columns")
+
 #---------------------- Overview ---------------------
   print("\n ----- top 5 Rows -----")
   print(df.head())
@@ -24,6 +26,7 @@ def run():
   print(df.dtypes)
   print("\n---- statistical summary ----")
   print(df.describe())
+
 # --------------------- Missing Values ----------------------
   missing = df.isnull().sum()
   missing_pct = (missing / len(df) * 100).round(2)
@@ -33,18 +36,22 @@ def run():
     print(missing_df)
   else:
     print("\nNo Missing Values")
+
 #---------------------- Duplicates -------------------------
   n_dup = df.duplicated().sum()
   print(f"\n----- Duplicate Rows:{n_dup}")
+
 #--------------------- Label Distribution -------------------
   print("\n------- Label Distribution -------")
   label_count = df[LABEL_COL].value_counts()
   for l, c in label_count.items():
     print(f"    {l:10s}: {c:4d} ({c / len(df) * 100:.1f}%)")
+
 #-------------------- Unique values in categorical columns ---------
   print("\n------ Unique values in categorical columns ------")
   for col in CATEGORICAL_COLS:
     print(f"    {col}: {df[col].unique().tolist()}")
+
 #--------------- Save Report ---------------------
   report_path = os.path.join(OUTPUT_DIR,"01_data_Exploration.txt")
   with open(report_path, "w", encoding="utf-8") as f:
@@ -63,12 +70,15 @@ def run():
       f.write(f"{missing_df}\n")
     else:
       f.write("\nNo Missing Values\n")
+
     # ---------------------- Duplicates -------------------------
     f.write(f"\n----- Duplicate Rows:{n_dup}\n")
+
     # --------------------- Label Distribution -------------------
     f.write("\n------- Label Distribution -------\n")
     for l, c in label_count.items():
       f.write(f"    {l:10s}: {c:4d} ({c / len(df) * 100:.1f}%)\n")
+
     # -------------------- Unique values in categorical columns ---------
     f.write("\n------ Unique values in categorical columns ------\n")
     for col in CATEGORICAL_COLS:
