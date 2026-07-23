@@ -63,5 +63,27 @@ def run():
 	#   Detect & cap outliers (IQR) ...
 	# -----------------------------------------------------------
 
+	log("\nDetect & cap outliers (IQR) ...")
+	feature_cols = [c for c in numeric_cols if c != "VisionClass"]
+	outlier_info = {}
+	for col in feature_cols:
+		Q1 = df_prep[col].quantile(0.25)
+		Q3 = df_prep[col].quantile(0.75)
+		IQR = Q3 - Q1
+		L = Q1 - 1.5 * IQR
+		H = Q3 + 1.5 * IQR
+		outlier = ((df_prep[col] < L) | (df_prep[col] > H)),sum()
+		if outlier > 0:
+			outlier_info[col] = (outlier, L, H)
+			df_prep = df_prep[col].clip(lower=L, upper=H)
+			log(f"{col}: {outlier} outlier capped --> [{l:.1f}, {H:.1f}]")
+		if not outlier_info:
+			log("No outliers detected")
+
+	# -----------------------------------------------------------
+	#   Remove Duplicates ...
+	# -----------------------------------------------------------
+
+
 
 run()
