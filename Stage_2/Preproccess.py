@@ -32,14 +32,36 @@ def run():
 
 	log(f"Original shape: {df.shape}")
 
-	#-----------------------------------------------------------
-	#   Standardized categorical columns ...
-	#-----------------------------------------------------------
+	# -----------------------------------------------------------
+	#   Encode Target Variable ...
+	# -----------------------------------------------------------
 
-	log("\nStanderdized categorical columns ...")
-	for col in ["VisionClass"]:
-		df_prep[col] = df_prep[col].str.strip().str.lower()
-		df_prep[col] = df_prep[col].map({"normal": 0, "weak": 1, "myopia": 2, "hyperopia": 3})
-		log(f"{col}: normal-->0, weak-->1, myopia-->2, hyperopia-->3")
+	log("\nEncode Target Variable ...")
+	l = LabelEncoder()
+	df_prep["VisionClass"] = l.fit_transform(df_prep["VisionClass"])
+	label_map = dict(zip(l.classes_,l.transform(l.classes_)))
+	log(f"Mapping: {label_map}")
+
+	# -----------------------------------------------------------
+	#   Handle missing values - Median Technique ...
+	# -----------------------------------------------------------
+
+	log("\nHandle missing values - Median Technique ...")
+	numeric_cols = df_prep.select_dtypes(include=[np.number]).columns.tolist()
+	imputed_cols = {}
+	for c in numeric_cols:
+		n_missing = df_prep[c].isnull().sum()
+		if n_missing > 0:
+			median_val = df_prep[c].median()
+			df_prep[c] = df_prep[c].fillna(median_val)
+			imputed_cols[c] = (n_missing, median_val)
+			log(f" {c}: {n_missing} missing --> median = {median_val}")
+	remaining = df_prep.isnull().sum()
+	log(f" Remaining missing:\n{remaining}")
+
+	# -----------------------------------------------------------
+	#   Detect & cap outliers (IQR) ...
+	# -----------------------------------------------------------
+
 
 run()
