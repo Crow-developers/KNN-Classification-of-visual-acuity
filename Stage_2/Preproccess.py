@@ -72,17 +72,24 @@ def run():
 		IQR = Q3 - Q1
 		L = Q1 - 1.5 * IQR
 		H = Q3 + 1.5 * IQR
-		outlier = ((df_prep[col] < L) | (df_prep[col] > H)),sum()
+		outlier = ((df_prep[col] < L) | (df_prep[col] > H)).sum()
 		if outlier > 0:
 			outlier_info[col] = (outlier, L, H)
 			df_prep = df_prep[col].clip(lower=L, upper=H)
-			log(f"{col}: {outlier} outlier capped --> [{l:.1f}, {H:.1f}]")
+			log(f'{col}: {outlier} outlier capped --> [{L:.1f}, {H:.1f}]')
 		if not outlier_info:
 			log("No outliers detected")
 
 	# -----------------------------------------------------------
 	#   Remove Duplicates ...
 	# -----------------------------------------------------------
+
+	log("\nRemove Duplicates ...")
+	n_dup = df_prep.duplicated().sum()
+	log(f"\nDuplicates found: {n_dup}")
+	if n_dup > 0:
+		df_prep.drop_duplicates(inplace=True)
+		df_prep.reset_index(drop=True, inplace=True)
 
 
 
