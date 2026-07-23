@@ -2,7 +2,7 @@ import os
 import sys
 import pandas as pd
 # ------------------- path ---------------------
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(file)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATASET_PATH = os.path.join(BASE_DIR, "vision_dataset_messy.csv")
 OUTPUT_DIR = os.path.join(BASE_DIR, "output", "reports")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
